@@ -1,16 +1,19 @@
-//Centrado de Body y cambio de backgound color
+// Centrado de Body
 const cuerpo = document.body;
 cuerpo.style.textAlign = "center";
 cuerpo.style.backgroundColor = '#c2c2c2';
+//asignacion Titulo
+const titulo = document.getElementById('titulo');
+// Carrito
+let carrito = [];
 
-
-
-
-const titulo = document.getElementById('h1')
+// Nav bar
 const cabecera = document.getElementById('header');
 const navegacion = document.createElement('navbar');
 const nav = document.createElement('nav');
 const ul = document.createElement('ul');
+
+
 cabecera.appendChild(navegacion);
 navegacion.appendChild(nav);
 nav.appendChild(ul);
