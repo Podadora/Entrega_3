@@ -62,66 +62,29 @@ muestraProductos();
 
 // Boton Compra
 const espacioBotonCompra = document.createElement('h2');
-const botonCompra = document.createElement('button');
-botonCompra.style.width = '4rem';
-botonCompra.textContent = 'Comprar';
+const botonCompra = crearBoton("Comprar");
 espacioBotonCompra.appendChild(botonCompra);
 cuerpo.appendChild(espacioBotonCompra);
 
 // Boton Admin
 const espacioBotonAdmin = document.createElement('h3');
-const botonAdmin = document.createElement('button');
-botonAdmin.textContent = 'Admin Mode';
+const botonAdmin = crearBoton("Admin Mode");
 espacioBotonAdmin.appendChild(botonAdmin);
 cuerpo.appendChild(espacioBotonAdmin);
 
 //BotonCompra OnClick
-
 botonCompra.onclick= () => {
     cartSave('Carrito', JSON.stringify(carrito));
     botonAdmin.remove();
 };
 
 //BotonAdmin OnClick
-
 botonAdmin.onclick= () => {
     botonAdmin.remove();
     divProductos.remove();
     botonCompra.remove();
     adminMode();
 };
-
-
-
-/////////////Funcion para loguear como admin
-
-function adminMode(){
-
-    tituloProductos.innerText = "Ingrese Usuario y Contraseña"
-    const user = document.createElement('input');
-    const pass = document.createElement('input');
-    const aceptar = document.createElement('button');
-    aceptar.style.width = '4rem';
-    aceptar.textContent = "Aceptar";
-
-    cuerpo.appendChild(user);
-    cuerpo.appendChild(pass);
-    cuerpo.appendChild(aceptar);
-
-    aceptar.onclick = () => {
-        if (user.value == "admin" && pass.value == "admin"){
-            modificacionLista();
-            aceptar.remove();
-            user.remove();
-            pass.remove();
-            tituloProductos.innerText = "Modificacion de Precios";
-
-        }else alert("Datos incorrectos ( es admin admin)");
-    }
-}
-/////////////Funcion para operar como admin
-
-
 
 /////////////Constructor productos para carrito
 

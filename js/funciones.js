@@ -11,28 +11,21 @@ function muestraProductos(){
         /////////////Funcion para generar botones de productos
 function botonesCompra (codigo){
     //Botones Mas
-        const botonMas = document.createElement('button');
-        botonMas.style.width = '2rem';
+        const botonMas = crearBoton("+",2);
         botonMas.onclick = () => {
-            const limpiarResultadoSuma = document.getElementById ("resultado");
-            limpiarResultadoSuma.remove();
+            limpiarDiv("resultado")
             sumarCarrito(codigo,1);
             calculoGastos();
         };
-        botonMas.textContent = '+';
         divProductos.appendChild(botonMas);
     // Botones Menos
-        const botonMenos = document.createElement('button');
-        botonMenos.style.width = '2rem';
+        const botonMenos = crearBoton("-",2);
         botonMenos.onclick = () => {
-            const limpiarResultadoResta = document.getElementById("resultado");
-            limpiarResultadoResta.remove();
-            const comparacion = carrito.find(t => t.descripcion === productos[codigo-1].descripcion);
-            console.log(productos[codigo-1].descripcion)
-            comparacion.cantidad == 0 ? alert("Cantidad no puede ser menor a 0!") : restarCarrito(codigo,-1);
+            limpiarDiv("resultado")
+            const comparacion = carrito.find(t => t.code === codigo);
+            !comparacion == undefined ? alert("Cantidad no puede ser menor a 0!") : restarCarrito(codigo,1);
             calculoGastos();
         };
-        botonMenos.textContent = '-';
         divProductos.appendChild(botonMenos);
 }
 
@@ -40,13 +33,14 @@ function botonesCompra (codigo){
 
 function sumarCarrito (indice, cantidad){
     const productoASumar = productos.find(p => p.codigo === indice);
-    const carritoItemSumar = carrito.find(item => item.code === indice);
+    const carritoItemSumar = carrito.find(itemSuma => itemSuma.code === indice);
     carritoItemSumar ? carritoItemSumar.cantidad += cantidad : carrito.push(new Producto(cantidad, productoASumar.descripcion, productoASumar.precio, productoASumar.codigo));
 }
 ////////////Funcion restar carrito
 function restarCarrito (indice, cantidad){
-    const carritoItemRestar = carrito.find(item => item.descripcion === productos[indice-1].descripcion);
-    (carritoItemRestar.cantidad == 1) ? carrito.splice(indice-1,1) : carritoItemRestar.cantidad += cantidad;
+    const productoARestar = productos.find(q => q.codigo === indice);
+    const carritoItemRestar = carrito.find(itemResta => itemResta.code === productoARestar.codigo);
+    !carritoItemRestar ? alert("Cantidad no puede ser menor a 0") : carritoItemRestar && carritoItemRestar.cantidad == 1 ? ((carrito = carrito.filter(obj => obj.code !== productoARestar.codigo))) : carritoItemRestar.cantidad -= cantidad;
 }
 
 
@@ -63,42 +57,35 @@ function cartLoad() {
 /////////////Funcion para calcular y mostrar los gastos
 
 function calculoGastos(){
-    const divCarrito = document.createElement('footer');
-    divCarrito.id = "resultado";
+    const divCarrito = document.getElementById('resultado');
     cuerpo.appendChild(divCarrito);
     let gastos = 0;
 
     for (const compras of carrito) {
-        const divCompras = document.createElement('p')
+        const divCompras = document.createElement('p');
         divCompras.innerHTML = ` ${compras.nombre} -- Precio: $${compras.precio} // Cantidad: ${compras.cantidad} Subtotal : $${compras.precio*compras.cantidad}`;    
         divCarrito.appendChild(divCompras);
+        gastos += (compras.precio*compras.cantidad);
     }
     const gastoTotal = document.createElement('p');
     gastoTotal.innerHTML = `El total de su compra seria : $${gastos}`;
     divCarrito.appendChild(gastoTotal);
 }
 
-// Modificacion de Precios
+/////////////Modificacion de Precios
 
 function modificacionLista (){
-    const nuevoMain = document.createElement('main')
-    cuerpo.appendChild(nuevoMain);
+    const nuevoMain = document.getElementById('main')
     for (const variables of productos){
-        
-        const botonModificar = document.createElement('button');
-        botonModificar.innerText = "Modificar";
-        
-        const botonEliminar = document.createElement('button');
-        botonEliminar.innerText = ("Eliminar")
-        
+        const botonModificar = crearBoton("Modificar");
+        const botonEliminar = crearBoton("Eliminar");
         const divisorProductos = document.createElement('p');
-        const codigo = document.createElement('input');
-        const precio = document.createElement('input');
-        const descripcion = document.createElement('input');
+        const codigo = crearInput("",4);
+        const precio = crearInput("",4);
+        const descripcion = crearInput("",4);
         codigo.value = variables.codigo;
         precio.value = variables.precio;
         descripcion.value = variables.descripcion;
-        console.log(variables.codigo);
         divisorProductos.appendChild(codigo);
         divisorProductos.appendChild(precio);
         divisorProductos.appendChild(descripcion);
@@ -115,8 +102,9 @@ function modificacionLista (){
                 productos[indexModificar].descripcion = descripcion.value;
                 alert("Modificacion Guardada correctamente");
             }
-
         }
+
+        
 // Configuacion Boton eliminar ITEM
         botonEliminar.onclick = () => {
             nuevoMain.remove();
@@ -126,23 +114,82 @@ function modificacionLista (){
             }
             modificacionLista ();
         }
-
-
+    }
+    // Boton para agregar Items
+    const botonAgregar = crearBoton("Agregar",4);
+    cuerpo.appendChild(botonAgregar);
+    botonAgregar.onclick = () => {
+        const botonModificar = crearBoton("Modificar");
+        const botonEliminar = crearBoton("Eliminar");
+        const divisorProductos = document.createElement('p');
+        const codigo = crearInput("",4);
+        const precio = crearInput("",4);
+        const descripcion = crearInput("",4);
+        divisorProductos.appendChild(codigo);
+        divisorProductos.appendChild(precio);
+        divisorProductos.appendChild(descripcion);
+        divisorProductos.appendChild(botonModificar);
+        divisorProductos.appendChild(botonEliminar);
+        nuevoMain.appendChild(divisorProductos);
     }
     // Configuacion Boton salir Admin
-    const botonSalirAdmin = document.createElement('button');
-    botonSalirAdmin.innerText = "Salir Admin";
+    const botonSalirAdmin = crearBoton("Salir Admin");
     cuerpo.appendChild(botonSalirAdmin);
     botonSalirAdmin.onclick = () =>{
-        nuevoMain.remove();
+        limpiarDiv("main");
         divProductos.innerHTML = '';
         cuerpo.appendChild(divProductos);
         botonSalirAdmin.remove();
+        botonAgregar.remove();
         muestraProductos();
         cuerpo.appendChild(botonCompra);
         cuerpo.appendChild(botonAdmin);
         tituloProductos.innerText = "Lista de Productos";
+        limpiarDiv("resultado")
     }
+}
 
-    
+
+
+function adminMode(){
+
+    tituloProductos.innerText = "Ingrese Usuario y Contraseña"
+    const user = crearInput("",4);
+    const pass = crearInput("",4);
+    const aceptar = crearBoton("Aceptar", 4);
+
+    cuerpo.appendChild(user);
+    cuerpo.appendChild(pass);
+    cuerpo.appendChild(aceptar);
+
+    aceptar.onclick = () => {
+        if (user.value == "" && pass.value == ""){
+            modificacionLista();
+            aceptar.remove();
+            user.remove();
+            pass.remove();
+            tituloProductos.innerText = "Modificacion de Precios";
+
+        }else alert("Datos incorrectos ( es admin admin)");
+    }
+}
+
+/////////////Funcion para crear botones
+function crearBoton(texto,rem){
+    const botonProvisorio = document.createElement('button')
+    botonProvisorio.textContent = texto;
+    botonProvisorio.style.width = rem + "rem";
+    return botonProvisorio
+}
+
+function crearInput(texto,rem){
+    const botonProvisorio = document.createElement('input')
+    botonProvisorio.textContent = texto;
+    botonProvisorio.style.width = rem + "rem";
+    return botonProvisorio
+}
+
+function limpiarDiv(parametro){
+    const limpiarDivision = document.getElementById (parametro);
+    if (limpiarDivision) {limpiarDivision.innerHTML = ''; }
 }
