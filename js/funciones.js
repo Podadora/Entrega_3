@@ -14,28 +14,50 @@ function botonesCompra (codigo){
         const botonMas = document.createElement('button');
         botonMas.style.width = '2rem';
         botonMas.onclick = () => {
-            let valor1 = document.getElementById(codigo);
-            valor1.value ++;
+            const limpiarResultadoSuma = document.getElementById ("resultado");
+            limpiarResultadoSuma.remove();
+            sumarCarrito(codigo,1);
+            calculoGastos();
         };
         botonMas.textContent = '+';
         divProductos.appendChild(botonMas);
-    
-
-    
     // Botones Menos
         const botonMenos = document.createElement('button');
         botonMenos.style.width = '2rem';
         botonMenos.onclick = () => {
-            valor1 = document.getElementById(codigo);
-            if (valor1.value <= 0 ){
-                alert("Cantidad no puede ser menor a 0!");
-                valor1.value = 0;
-            }
-            else
-                valor1.value --;
+            const limpiarResultadoResta = document.getElementById("resultado");
+            limpiarResultadoResta.remove();
+            const comparacion = carrito.find(t => t.descripcion === productos[codigo-1].descripcion);
+            console.log(productos[codigo-1].descripcion)
+            comparacion.cantidad == 0 ? alert("Cantidad no puede ser menor a 0!") : restarCarrito(codigo,-1);
+            calculoGastos();
         };
         botonMenos.textContent = '-';
         divProductos.appendChild(botonMenos);
+}
+
+/////////////Funcion agregar a carrito
+
+function sumarCarrito (indice, cantidad){
+    const productoASumar = productos.find(p => p.codigo === indice);
+    const carritoItemSumar = carrito.find(item => item.code === indice);
+    carritoItemSumar ? carritoItemSumar.cantidad += cantidad : carrito.push(new Producto(cantidad, productoASumar.descripcion, productoASumar.precio, productoASumar.codigo));
+}
+////////////Funcion restar carrito
+function restarCarrito (indice, cantidad){
+    const carritoItemRestar = carrito.find(item => item.descripcion === productos[indice-1].descripcion);
+    (carritoItemRestar.cantidad == 1) ? carrito.splice(indice-1,1) : carritoItemRestar.cantidad += cantidad;
+}
+
+
+/////////////Funcion para guardar carrito a localStorage
+const cartSave = (key,value) => {localStorage.setItem(key,value)}
+
+/////////////Funcion para cargar carrito a localStorage
+
+function cartLoad() {
+    const cartData = localStorage.getItem('Carrito');
+    return cartData ? JSON.parse(cartData) : [];
 }
 
 /////////////Funcion para calcular y mostrar los gastos
@@ -45,15 +67,6 @@ function calculoGastos(){
     divCarrito.id = "resultado";
     cuerpo.appendChild(divCarrito);
     let gastos = 0;
-    for (const product of productos){
-        let as = document.getElementById(product.codigo);
-        if (as.value > 0) {
-            carrito.push(new Producto(as.value, product.descripcion, product.precio));
-            gastos = product.precio * as.value + gastos;
-
-        }
-    }
-
 
     for (const compras of carrito) {
         const divCompras = document.createElement('p')
@@ -65,6 +78,7 @@ function calculoGastos(){
     divCarrito.appendChild(gastoTotal);
 }
 
+// Modificacion de Precios
 
 function modificacionLista (){
     const nuevoMain = document.createElement('main')

@@ -2,6 +2,8 @@
 const tituloProductos = document.getElementById('titulo');
 tituloProductos.innerText = "Lista de Productos";
 
+
+
 ///////////// declaracion variable de precios base
 
 let productos = [
@@ -58,10 +60,6 @@ const divProductos = document.createElement('main');
 cuerpo.appendChild(divProductos);
 muestraProductos();
 
-
-
-
-
 // Boton Compra
 const espacioBotonCompra = document.createElement('h2');
 const botonCompra = document.createElement('button');
@@ -80,10 +78,7 @@ cuerpo.appendChild(espacioBotonAdmin);
 //BotonCompra OnClick
 
 botonCompra.onclick= () => {
-    carrito = [];
-    const limpiarResultado = document.getElementById ("resultado");
-    limpiarResultado.remove();
-    calculoGastos();
+    cartSave('Carrito', JSON.stringify(carrito));
     botonAdmin.remove();
 };
 
@@ -131,9 +126,10 @@ function adminMode(){
 /////////////Constructor productos para carrito
 
 class Producto {
-    constructor(cantidad, nombre, precio) {
+    constructor(cantidad, nombre, precio, code) {
         this.cantidad = cantidad;
         this.nombre = nombre;
         this.precio = precio;
+        this.code = code;
     }
 }
