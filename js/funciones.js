@@ -119,18 +119,43 @@ function modificacionLista (){
     const botonAgregar = crearBoton("Agregar",4);
     cuerpo.appendChild(botonAgregar);
     botonAgregar.onclick = () => {
-        const botonModificar = crearBoton("Modificar");
-        const botonEliminar = crearBoton("Eliminar");
+        const botonModificarNew = crearBoton("Modificar");
+        botonModificarNew.disabled = true;
+        const botonEliminarNew = crearBoton("Eliminar");
         const divisorProductos = document.createElement('p');
         const codigo = crearInput("",4);
         const precio = crearInput("",4);
         const descripcion = crearInput("",4);
+        descripcion.disabled = true;
+        precio.disabled = true;
+        codigo.onchange  = () => {
+            const nuevoProducto = productos.findIndex(c => c.codigo === parseInt(codigo.value));
+            console.log(codigo.value)
+            console.log(nuevoProducto)
+            if (nuevoProducto !== -1){
+                alert ("Codigo ya existe")
+            }productos.push({
+                descripcion: '',
+                precio: 0,
+                codigo: parseInt(codigo.value),
+                })
+                descripcion.disabled = false;
+                precio.disabled = false;
+                botonModificarNew.disabled = false;
+        }
+        botonModificarNew.onclick = () => {
+            const productoAModificar = productos.findIndex(d => d.codigo === parseInt(codigo.value))
+            productos[productoAModificar].descripcion = descripcion.value;
+            productos[productoAModificar].precio = parseInt(precio.value);
+            console.log(productos);
+        }
         divisorProductos.appendChild(codigo);
         divisorProductos.appendChild(precio);
         divisorProductos.appendChild(descripcion);
-        divisorProductos.appendChild(botonModificar);
-        divisorProductos.appendChild(botonEliminar);
+        divisorProductos.appendChild(botonModificarNew);
+        divisorProductos.appendChild(botonEliminarNew);
         nuevoMain.appendChild(divisorProductos);
+        botonAgregar.disabled = true;
     }
     // Configuacion Boton salir Admin
     const botonSalirAdmin = crearBoton("Salir Admin");
